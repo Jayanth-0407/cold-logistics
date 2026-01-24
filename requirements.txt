@@ -1,0 +1,10 @@
+fastapi
+pydantic
+uvicorn
+requests
+python-dotenv
+pandas
+scikit-learn
+numpy
+openrouteservice
+
