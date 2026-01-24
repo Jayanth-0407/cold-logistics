@@ -68,7 +68,7 @@ if analyze_btn:
             }
             
             #calling Docker API
-            response = requests.post("https://risk-logistics-api.onrender.com/analyse-route", json=payload)
+            response = requests.post("https://cold-logistics.onrender.com/analyse-route", json=payload)
             data = response.json()
             
             col1, col2, col3 = st.columns(3)
