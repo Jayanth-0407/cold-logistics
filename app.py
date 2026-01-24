@@ -68,7 +68,7 @@ if analyze_btn:
             }
             
             #calling Docker API
-            response = requests.post("http://localhost:8000/analyse-route", json=payload)
+            response = requests.post("https://risk-logistics-api.onrender.com/analyse-route", json=payload)
             data = response.json()
             
             col1, col2, col3 = st.columns(3)
@@ -107,4 +107,4 @@ if analyze_btn:
 
         except Exception as e:
             st.error(f"Error connecting to Backend: {e}")
-            st.info("Make sure your Docker Container is running on port 8000!")
+            st.info("Make sure Docker Container is running on port 8000!")
