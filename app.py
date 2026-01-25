@@ -67,7 +67,7 @@ if analyze_btn:
                 "cargo_type": cargo_type
             }
             
-            #calling Docker API
+            #to call docker API
             response = requests.post("https://cold-logistics.onrender.com/analyse-route", json=payload)
             data = response.json()
             
@@ -82,15 +82,14 @@ if analyze_btn:
 
             st.subheader("Route & Checkpoints")
             
-            # Convert checkpoints to DataFrame for the Map
+            #Converting checkpoints to DataFrame for the Map
             map_data = pd.DataFrame(data['weather_checkpoints'])
             st.map(map_data, zoom=6)
 
-            # 3. Detailed Checkpoint Analysis
-            st.subheader(" AI Risk Analysis per Checkpoint")
+            st.subheader("AI Risk Analysis per Checkpoint")
             
             for i, point in enumerate(data['weather_checkpoints']):
-                # Create a card-like look
+                
                 with st.expander(f"Checkpoint {i+1} (Temp: {point['temp']}°C)", expanded=True):
                     
                     c1, c2 = st.columns([1, 4])
