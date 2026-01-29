@@ -105,7 +105,7 @@ def analyse_route(order:Deliveryrequest):
                 'cargo_type': cargo_id,
                 'temperature': temp,
                 'humidity': humidity,
-                'time_hours': 2.0  # We assume 2 hours travel between points
+                'time_hours': 2.0 
             }])
             
             prediction = risk.predict(input_data)[0]
