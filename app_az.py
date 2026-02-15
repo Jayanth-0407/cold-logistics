@@ -68,13 +68,8 @@ if analyze_btn:
             }
             
             # calling Docker API
-           # --- ADD THESE 3 LINES ---
-            if 'features' not in route_data:
-                print(f"ORS ERROR: {route_data}") # Prints to Azure logs
-                from fastapi import HTTPException
-                raise HTTPException(status_code=502, detail=f"ORS API Error: {route_data}")
-            # -------------------------
-            path_point = route_data['features'][0]['geometry']['coordinates']
+            response = requests.post("https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route", json=payload)
+            data = response.json()
                     
             # --- 🚨 THE MAGIC DEBUGGER 🚨 ---
             # If Azure does not return a "200 OK" success code, stop and show the raw error!
