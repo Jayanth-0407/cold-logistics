@@ -1,0 +1,24 @@
+name: Build and Push to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Log in to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: coldchainlog.azurecr.io
+        username: coldchainlog
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t coldchainlog.azurecr.io/backend-api:latest .
+        docker push coldchainlog.azurecr.io/backend-api:latest
