@@ -1,3 +1,61 @@
+import streamlit as st
+import requests
+import pandas as pd
+
+st.set_page_config(page_title="Risk-Aware Logistics", layout="wide")
+
+st.title("AI-Powered Cold Chain Logistics")
+st.markdown("---")
+
+with st.sidebar:
+    st.header("Configure Shipment")
+
+    cargo_type = st.selectbox(
+        "Select Cargo Type", 
+        ["ice cream","milk","vaccines","electronics"]
+    )
+    
+    route_option = st.selectbox(
+        "Select Route",
+        [
+            "Manali -> Leh",
+            "Chennai -> Kanchipuram",
+            "Delhi -> Agra",
+            "Mumbai -> Pune",
+            "Jaisalmer -> Jodhpur",
+            "Srinagar -> Gulmarg",
+            "Bangalore -> Mysore"
+        ]
+    )
+    
+    routes = {
+        "Manali -> Leh": {
+            "start": [32.2432, 77.1892], "end": [34.1526, 77.5770]
+        },
+        "Chennai -> Kanchipuram": {
+            "start": [13.0827, 80.2707], "end": [12.8185, 79.7156]
+        },
+        "Delhi -> Agra": {
+            "start": [28.6139, 77.2090], "end": [27.1767, 78.0081]
+        },
+        "Mumbai -> Pune": {
+            "start": [19.0760, 72.8777], "end": [18.5204, 73.8567]
+        },
+        "Jaisalmer -> Jodhpur": {
+            "start": [26.9157, 70.9083], "end": [26.2389, 73.0243]
+        },
+        "Srinagar -> Gulmarg": {
+            "start": [34.0837, 74.7973], "end": [34.0484, 74.3805]
+        },
+        "Bangalore -> Mysore": {
+            "start": [12.9716, 77.5946], "end": [12.2958, 76.6394]
+        }
+    }
+    
+    selected_route=routes[route_option]
+    
+    analyze_btn=st.button("Analyze Risk", type="primary")
+
 if analyze_btn:
     with st.spinner("Consulting AI Model..."):
         try:
@@ -10,9 +68,14 @@ if analyze_btn:
             }
             
             # calling Docker API
-            api_url = "https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route"
-            response = requests.post(api_url, json=payload)
-            
+           # --- ADD THESE 3 LINES ---
+            if 'features' not in route_data:
+                print(f"ORS ERROR: {route_data}") # Prints to Azure logs
+                from fastapi import HTTPException
+                raise HTTPException(status_code=502, detail=f"ORS API Error: {route_data}")
+            # -------------------------
+            path_point = route_data['features'][0]['geometry']['coordinates']
+                    
             # --- 🚨 THE MAGIC DEBUGGER 🚨 ---
             # If Azure does not return a "200 OK" success code, stop and show the raw error!
             if response.status_code != 200:
