@@ -68,7 +68,7 @@ if analyze_btn:
             }
             
             #to call docker API
-            response = requests.post("cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route", json=payload)
+            response = requests.post("https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route", json=payload)
             data = response.json()
             
             col1, col2, col3 = st.columns(3)
