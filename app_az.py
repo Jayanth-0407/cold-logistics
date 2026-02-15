@@ -67,18 +67,7 @@ if analyze_btn:
                 "cargo_type": cargo_type
             }
             
-            # calling Docker API
             response = requests.post("https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route", json=payload)
-            data = response.json()
-                    
-            # --- 🚨 THE MAGIC DEBUGGER 🚨 ---
-            # If Azure does not return a "200 OK" success code, stop and show the raw error!
-            if response.status_code != 200:
-                st.error(f"Backend Error: Status Code {response.status_code}")
-                st.code(response.text) # This will print the raw HTML or error message!
-                st.stop() # Stops the app here so it doesn't crash on response.json()
-            # --------------------------------
-            
             data = response.json()
             
             col1, col2, col3 = st.columns(3)
