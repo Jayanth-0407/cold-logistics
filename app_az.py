@@ -1,61 +1,3 @@
-import streamlit as st
-import requests
-import pandas as pd
-
-st.set_page_config(page_title="Risk-Aware Logistics", layout="wide")
-
-st.title("AI-Powered Cold Chain Logistics")
-st.markdown("---")
-
-with st.sidebar:
-    st.header("Configure Shipment")
-
-    cargo_type = st.selectbox(
-        "Select Cargo Type", 
-        ["ice cream","milk","vaccines","electronics"]
-    )
-    
-    route_option = st.selectbox(
-        "Select Route",
-        [
-            "Manali -> Leh",
-            "Chennai -> Kanchipuram",
-            "Delhi -> Agra",
-            "Mumbai -> Pune",
-            "Jaisalmer -> Jodhpur",
-            "Srinagar -> Gulmarg",
-            "Bangalore -> Mysore"
-        ]
-    )
-    
-    routes = {
-        "Manali -> Leh": {
-            "start": [32.2432, 77.1892], "end": [34.1526, 77.5770]
-        },
-        "Chennai -> Kanchipuram": {
-            "start": [13.0827, 80.2707], "end": [12.8185, 79.7156]
-        },
-        "Delhi -> Agra": {
-            "start": [28.6139, 77.2090], "end": [27.1767, 78.0081]
-        },
-        "Mumbai -> Pune": {
-            "start": [19.0760, 72.8777], "end": [18.5204, 73.8567]
-        },
-        "Jaisalmer -> Jodhpur": {
-            "start": [26.9157, 70.9083], "end": [26.2389, 73.0243]
-        },
-        "Srinagar -> Gulmarg": {
-            "start": [34.0837, 74.7973], "end": [34.0484, 74.3805]
-        },
-        "Bangalore -> Mysore": {
-            "start": [12.9716, 77.5946], "end": [12.2958, 76.6394]
-        }
-    }
-    
-    selected_route=routes[route_option]
-    
-    analyze_btn=st.button("Analyze Risk", type="primary")
-
 if analyze_btn:
     with st.spinner("Consulting AI Model..."):
         try:
@@ -67,8 +9,18 @@ if analyze_btn:
                 "cargo_type": cargo_type
             }
             
-            #to call docker API
-            response = requests.post("https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route", json=payload)
+            # calling Docker API
+            api_url = "https://cold-logistics-backend-dbdne0hhc5fua9g4.koreacentral-01.azurewebsites.net/analyse-route"
+            response = requests.post(api_url, json=payload)
+            
+            # --- 🚨 THE MAGIC DEBUGGER 🚨 ---
+            # If Azure does not return a "200 OK" success code, stop and show the raw error!
+            if response.status_code != 200:
+                st.error(f"Backend Error: Status Code {response.status_code}")
+                st.code(response.text) # This will print the raw HTML or error message!
+                st.stop() # Stops the app here so it doesn't crash on response.json()
+            # --------------------------------
+            
             data = response.json()
             
             col1, col2, col3 = st.columns(3)
@@ -82,14 +34,15 @@ if analyze_btn:
 
             st.subheader("Route & Checkpoints")
             
-            #Converting checkpoints to DataFrame for the Map
+            # Convert checkpoints to DataFrame for the Map
             map_data = pd.DataFrame(data['weather_checkpoints'])
             st.map(map_data, zoom=6)
 
+            # 3. Detailed Checkpoint Analysis
             st.subheader("AI Risk Analysis per Checkpoint")
             
             for i, point in enumerate(data['weather_checkpoints']):
-                
+                # Create a card-like look
                 with st.expander(f"Checkpoint {i+1} (Temp: {point['temp']}°C)", expanded=True):
                     
                     c1, c2 = st.columns([1, 4])
@@ -106,4 +59,4 @@ if analyze_btn:
 
         except Exception as e:
             st.error(f"Error connecting to Backend: {e}")
-            st.info("Make sure Docker Container is running on port 8000!")
+            st.info("Make sure your Docker Container is running properly on Azure!")
