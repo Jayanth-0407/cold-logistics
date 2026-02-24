@@ -22,7 +22,7 @@ This project is built using a decoupled microservices architecture, containerize
 * **Automated CI/CD Pipeline:** Pushes to the `main` branch trigger a GitHub Action that automatically builds a new Docker image, pushes it to Azure Container Registry, and triggers a webhook to restart the live Azure App Service with zero manual downtime.
 
 ## 💻 Tech Stack
-* **Language:** Python 3.9
+* **Language:** Python 3.11.9
 * **Frontend Framework:** Streamlit, Pandas
 * **Backend Framework:** FastAPI, Uvicorn, Pydantic
 * **Cloud Infrastructure:** Microsoft Azure App Service (Linux), Azure Container Registry
